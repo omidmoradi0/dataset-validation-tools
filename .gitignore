@@ -5,3 +5,4 @@ venv/
 test_dataset/
 __pycache__/
 *.pyc
+dataset/
