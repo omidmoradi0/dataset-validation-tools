@@ -30,7 +30,7 @@ class HealthChecker:
                 xml_validator = XmlValidator(folder_path)
 
                 image_validator.image_validation()
-                xml_validator.xml_validation()
+                xml_validator.xml_validation(check_format=True)
             else:
                 print(f"Folder {folder_path} does not exist.")
                 results[folder_path] = None
