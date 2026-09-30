@@ -6,3 +6,4 @@ test_dataset/
 __pycache__/
 *.pyc
 dataset/
+output.txt
