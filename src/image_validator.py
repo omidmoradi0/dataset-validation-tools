@@ -16,7 +16,7 @@ class ImageValidator:
         for file in os.listdir(self.address):
             if file.endswith(('.jpg', '.jpeg', '.png')):
                 image_path = os.path.join(self.address, file)
-                self.images[image_path] = self.get_image_size(image_path)
+                self.images[image_path] = self.get_image_size(image_path , delete_empty=delete_empty)
                 if self.images[image_path] != self.image_size:
 
                     count_mismatched += 1
@@ -26,6 +26,7 @@ class ImageValidator:
                     print(f"Image {image_path} is empty")
                     if delete_empty == True:
                         os.remove(image_path)
+
                     
         return count_mismatched  , unsupported_images
 
@@ -48,11 +49,14 @@ class ImageValidator:
         return count_single , single_files
 
     
-    def get_image_size(self, image_path):
+    def get_image_size(self, image_path,delete_empty = False):
         image = cv2.imread(image_path)
 
         if image is None:
+            if delete_empty == True:
+                os.remove(image_path)
             raise ValueError(f"Cannot read image: {image_path}")
+
 
         return image.shape[:2]
 
