@@ -8,20 +8,24 @@ class XmlValidator:
     def check_xml_size(self , delete_empty = False):
         print("---> start checking xml size : ")
         count_mismatched = 0
+        unsorted_xml_files = []
+
 
         for file in os.listdir(self.address):
             if file.endswith('.xml'):
                 xml_path = os.path.join(self.address, file)
                 if os.path.getsize(xml_path) == 0:
                     print(f"xml {xml_path} is empty")
+                    unsorted_xml_files.append(xml_path)
                     if delete_empty == True:
                         os.remove(xml_path)
                     
-        return count_mismatched
+        return count_mismatched, unsorted_xml_files
 
     def check_single_files(self):
 
         count_single = 0
+        single_files = []
 
 
         for file in os.listdir(self.address):
@@ -39,12 +43,14 @@ class XmlValidator:
 
                 if not is_found :
                     count_single += 1
+                    single_files.append(file_name)
 
         print(f"we have {count_single} file that have no image or xml file")
+        return count_single, single_files
 
     def check_format(self):
         print("---> start checking XML format:")
-
+        unsorted_xml_files = []
         invalid_count = 0
 
         for file in os.listdir(self.address):
@@ -60,6 +66,7 @@ class XmlValidator:
             except ET.ParseError:
                 print(f"{file}: invalid XML syntax")
                 invalid_count += 1
+                unsorted_xml_files.append(file)
                 continue
 
             errors = []
@@ -200,12 +207,24 @@ class XmlValidator:
 
         print(f"\nInvalid XML files: {invalid_count}")
 
-        return invalid_count
+        return invalid_count, unsorted_xml_files
                     
 
 
-    def xml_validation(self,delete_empty = False , check_format = False):
-        self.check_xml_size(delete_empty=delete_empty)
-        self.check_single_files()
+    def xml_validation(self,delete_empty = False , check_format = False , output_file = None):
+        f1 = open(output_file, "a")
+        f1.write(f"\nxml validation started for {self.address} \n")
+        invalid_count, unsorted_xml_files = self.check_xml_size(delete_empty=delete_empty)
+        f1.write(f"we have {invalid_count} invalid XML files\n")
+        for file in unsorted_xml_files:
+            f1.write(f"invalid file: {file}\n")
+        count_single, single_files = self.check_single_files()
+        f1.write(f"we have {count_single} files that have no image or xml file\n")
+        for file_name in single_files:
+            f1.write(f"single file: {file_name}\n")
         if check_format:
-            self.check_format()
+            invalid_count_format, unsorted_xml_files_format = self.check_format()
+            f1.write(f"we have {invalid_count_format} XML files with format issues\n")
+            for file in unsorted_xml_files_format:
+                f1.write(f"format issue file: {file}\n")
+        f1.close()

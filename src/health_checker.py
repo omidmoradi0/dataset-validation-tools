@@ -29,8 +29,8 @@ class HealthChecker:
                 image_validator = ImageValidator(self.image_size,folder_path)
                 xml_validator = XmlValidator(folder_path)
 
-                image_validator.image_validation()
-                xml_validator.xml_validation()
+                image_validator.image_validation(output_file=self.output_file)
+                xml_validator.xml_validation(output_file=self.output_file)
             else:
                 print(f"Folder {folder_path} does not exist.")
                 results[folder_path] = None
